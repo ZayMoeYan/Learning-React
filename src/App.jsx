@@ -1,35 +1,78 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import List from "./List";
+import Item from "./Item";
+import Form from "./Form";
+import { useContext, useState } from "react";
+import { AppContext } from "./ThemeApp";
 
-function App() {
-  const [count, setCount] = useState(0)
 
+export default function App() {
+
+  const {mode} = useContext(AppContext);
+
+  const[data, setData] = useState([
+    {id: 1, content: "Laptop", name: "Dell"},
+    {id: 2, content: "Phone", name: "Apple"},
+    {id: 3, content: "Phone", name: "Samsung"},
+  ])
+
+  const[showForm, setShowForm] = useState(false)
+
+  const remove = id => {
+    setData(data.filter(item => item.id !== id ))
+  }
+
+  const add = (content, name) => {
+    const id = data[data.length - 1].id + 1
+    setData([...data, {id, content, name}])
+  }
+  
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div style={{
+      minHeight: 1000, margin: "20px auto",
+      background: mode === "dark" ? "black" : "white",
+      color: mode === "dark" ? "white" : "black"
+      }} >
+
+        <div style={{ maxWidth: 600, margin: "0 auto" }}>
+
+        <h1 style={{display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }} >
+          
+          Yaycha
+        
+        <button
+          onClick={() => setShowForm(!showForm)}
+        style={{
+          width: 32,
+          height: 32,
+          background: showForm ? "blue" : "black",
+          color: "white",
+          cursor: "pointer",
+          borderRadius: 100
+        }} >
+          {showForm ? "x" : "+"}
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        </h1>
+
+        {showForm && <Form add={add} />}
+
+        <List>
+          {
+            data.map(item => {
+              return ( <Item key={item.id} item={item}  remove={remove} />)
+            })
+          }
+        </List>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+    </div>
+  );
 }
 
-export default App
+
+
+
+
+
